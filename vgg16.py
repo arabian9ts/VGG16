@@ -56,7 +56,7 @@ class Vgg16:
         Args: output of just before layer
         Return: max_pooling layer
         """
-        return tf.nn.max_pool(input, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME', name=name)
+        return tf.nn.max_pool(input, ksize=vgg.ksize, strides=vgg.conv_strides, padding='SAME', name=name)
 
     def convolution(self, input, name='conv'):
         """
@@ -66,7 +66,7 @@ class Vgg16:
         with tf.variable_scope(name):
             kernel = self.getWeight(vgg.structure[self.lcnt][0])
             bias = self.getBias(vgg.structure[self.lcnt][1])
-            conv = tf.nn.conv2d(input, kernel, strides=[1, 1, 1, 1], padding='SAME')
+            conv = tf.nn.conv2d(input, kernel, strides=vgg.pool_strides, padding='SAME')
             self.lcnt += 1
         return tf.nn.relu(tf.add(conv, bias))
 
