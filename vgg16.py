@@ -9,6 +9,8 @@ import tensorflow as tf
 import numpy as np
 import vgg16_structure as vgg
 
+from activation import Activation
+
 class Vgg16:
     def __init__(self):
         pass
@@ -45,7 +47,12 @@ class Vgg16:
         self.conv5_3 = self.convolution(self.conv5_2)
         self.pool5 = self.pooling(self.conv5_3)
 
-        self.net = self.pool5
+        self.fc6 = self.fully_connection(self.pool5, activation=Activation.relu)
+        self.fc7 = self.fully_connection(self.fc6, activation=Activation.relu)
+        self.fc8 = self.fully_connection(self.fc7, activation=Activation.softmax)
+
+
+        self.net = self.fc8
 
         return 0
 
@@ -56,36 +63,43 @@ class Vgg16:
         Args: output of just before layer
         Return: max_pooling layer
         """
-        return tf.nn.max_pool(input, ksize=vgg.ksize, strides=vgg.conv_strides, padding='SAME', name=name)
+        return tf.nn.max_pool(input, ksize=vgg.ksize, strides=vgg.pool_strides, padding='SAME', name=name)
 
     def convolution(self, input, name='conv'):
         """
         Args: output of just before layer
         Return: convolution layer
         """
+        print('Current input size in convolution layer is: '+str(input.get_shape().as_list()))
         with tf.variable_scope(name):
             kernel = self.getWeight(vgg.structure[self.lcnt][0])
             bias = self.getBias(vgg.structure[self.lcnt][1])
-            conv = tf.nn.conv2d(input, kernel, strides=vgg.pool_strides, padding='SAME')
+            conv = tf.nn.conv2d(input, kernel, strides=vgg.conv_strides, padding='SAME', name=name)
             self.lcnt += 1
         return tf.nn.relu(tf.add(conv, bias))
 
-    def fully_connection(self, input, name='fc'):
+    def fully_connection(self, input, name='fc', activation=Activation.relu):
         """
         Args: output of just before layer
         Return: fully_connected layer
         """
         with tf.variable_scope(name):
-            shape = bottom.get_shape().as_list()
+            shape = input.get_shape().as_list()
             dim = 1
             for d in shape[1:]:
                 dim *= d
-            x = tf.reshape(bottom, [-1, dim])
+            x = tf.reshape(input, [-1, dim])
 
-            weights = self.get_fc_weight(name)
-            biases = self.get_bias(name)
+            weights = self.getWeight([dim, vgg.structure[self.lcnt][0][0]])
+            biases = self.getBias(vgg.structure[self.lcnt][1])
 
             fc = tf.nn.bias_add(tf.matmul(x, weights), biases)
+            fc = activation(fc)
+
+            print('Input shape is: '+str(shape))
+            print('Total nuron count is: '+str(dim))
+            self.lcnt += 1
+            
             return fc
 
     def getWeight(self, shape):
@@ -107,4 +121,3 @@ class Vgg16:
         """
         initial = tf.constant(0.1, shape=shape)
         return tf.Variable(initial)
-
