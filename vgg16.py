@@ -9,6 +9,7 @@ import tensorflow as tf
 import numpy as np
 import vgg16_structure as vgg
 
+from functools import reduce
 from activation import Activation
 
 class Vgg16:
@@ -82,9 +83,7 @@ class Vgg16:
         size = vgg.structure[name]
         with tf.variable_scope(name):
             shape = input.get_shape().as_list()
-            dim = 1
-            for d in shape[1:]:
-                dim *= d
+            dim = reduce(lambda x, y: x * y, shape[1:])
             x = tf.reshape(input, [-1, dim])
 
             weights = self.getWeight([dim, size[0][0]])
