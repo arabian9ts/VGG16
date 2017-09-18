@@ -7,17 +7,26 @@ author: arabian9ts
 
 # structure of convolution and pooling layer up to fully-connection layer
 structure = [
+    # convolution layer 1
     [[3, 3, 3, 64], [64]],
     [[3, 3, 64, 64], [64]],
+
+    # convolution layer 2
     [[3, 3, 64, 128], [128]],
     [[3, 3, 128, 128], [128]],
+
+    # convolution layer 3
     [[3, 3, 128, 256], [256]],
     [[3, 3, 256, 256], [256]],
     [[3, 3, 256, 256], [256]],
+
+    # convolution layer 4
     [[3, 3, 256, 512], [512]],
     [[3, 3, 512, 512], [512]],
     [[3, 3, 512, 512], [512]],
+
+    # convolution layer 5
     [[3, 3, 512, 512], [512]],
     [[3, 3, 512, 512], [512]],
-    [[3, 3, 512, 512], [512]]
+    [[3, 3, 512, 512], [512]],
 ]
