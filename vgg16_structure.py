@@ -5,13 +5,14 @@ date: 9/17
 author: arabian9ts
 """
 
+
 # structure of convolution and pooling layer up to fully-connection layer
+"""
+size-format:
+             [ [      convolution_kernel     ], [   bias   ] ]
+             [ [ f_h, f_w, in_size, out_size ], [ out_size ] ]
+"""
 structure = {
-    """
-    size-format:
-                 [ [      convolution_kernel     ], [   bias   ] ]
-                 [ [ f_h, f_w, in_size, out_size ], [ out_size ] ]
-    """
 
     # convolution layer 1
     'conv1_1': [[3, 3, 3, 64], [64]],

@@ -14,6 +14,7 @@ from activation import Activation
 
 class Vgg16:
     def __init__(self):
+        print(vgg.structure)
         pass
 
     def build(self, input):
