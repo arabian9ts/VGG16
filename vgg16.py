@@ -50,9 +50,9 @@ class Vgg16:
         self.fc7 = self.fully_connection(self.fc6, Activation.relu, 'fc7')
         self.fc8 = self.fully_connection(self.fc7, Activation.softmax, 'fc8')
 
-        self.net = self.fc8
+        self.prob = self.fc8
 
-        return 0
+        return self.prob
 
 
 
@@ -71,8 +71,8 @@ class Vgg16:
         print('Current input size in convolution layer is: '+str(input.get_shape().as_list()))
         with tf.variable_scope(name):
             size = vgg.structure[name]
-            kernel = self.getWeight(size[0])
-            bias = self.getBias(size[1])
+            kernel = self.get_weight(size[0])
+            bias = self.get_bias(size[1])
             conv = tf.nn.conv2d(input, kernel, strides=vgg.conv_strides, padding='SAME', name=name)
         return tf.nn.relu(tf.add(conv, bias))
 
@@ -87,8 +87,8 @@ class Vgg16:
             dim = reduce(lambda x, y: x * y, shape[1:])
             x = tf.reshape(input, [-1, dim])
 
-            weights = self.getWeight([dim, size[0][0]])
-            biases = self.getBias(size[1])
+            weights = self.get_weight([dim, size[0][0]])
+            biases = self.get_bias(size[1])
 
             fc = tf.nn.bias_add(tf.matmul(x, weights), biases)
             fc = activation(fc)
@@ -98,7 +98,7 @@ class Vgg16:
             
             return fc
 
-    def getWeight(self, shape):
+    def get_weight(self, shape):
         """
         generate weight tensor
 
@@ -108,7 +108,7 @@ class Vgg16:
         initial = tf.truncated_normal(shape, stddev=0.1)
         return tf.Variable(initial)
 
-    def getBias(self, shape):
+    def get_bias(self, shape):
         """
         generate bias tensor
 
