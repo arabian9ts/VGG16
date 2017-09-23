@@ -12,7 +12,7 @@ import numpy as np
 from vgg16 import *
 
 # global variables
-DATASET_NUM = 1000
+DATASET_NUM = 10000
 BATCH = 20
 EPOCH = 1
 BATCH_CNT = 0
