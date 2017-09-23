@@ -14,7 +14,7 @@ from vgg16 import *
 
 # global variables
 DATASET_NUM = 10000
-BATCH = 50
+BATCH = 20
 EPOCH = 10
 BATCH_CNT = 0
 
@@ -87,12 +87,12 @@ with tf.Session() as sess:
     # input image's placeholder and output of VGG16
     input = tf.placeholder(shape=[None, 32, 32, 3], dtype=tf.float32)
     fmap = vgg.build(input)
-    predict = tf.add(tf.matmul(fmap, w), b)
+    predict = tf.sigmoid(tf.add(tf.matmul(fmap, w), b))
 
     # params for defining Loss-func and Training-step
     ans_labels = tf.placeholder(shape=None, dtype=tf.float32)
     loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=predict, labels=ans_labels))
-    optimizer = tf.train.AdamOptimizer(0.01)
+    optimizer = tf.train.AdamOptimizer(0.02)
     train_step = optimizer.minimize(loss)
 
     sess.run(tf.global_variables_initializer())
@@ -107,13 +107,16 @@ with tf.Session() as sess:
             sess.run(train_step, feed_dict={input: batch, ans_labels: ans})
 
             print('Batch: '+str(b)+', Loss: '+str(sess.run(loss, feed_dict={input: batch, ans_labels: ans})))
+
+            if b % 10 == 0:
+                print('============================================')
+                print('START TEST')
+                test()
+                print('END TEST')
+                print('============================================')
+
         print('========== Epoch: '+str(e)+' END ==========')
-        print('============================================')
-        print('START TEST')
-        test()
-        print('END TEST')
-        print('============================================')
-        
+
     print('==================== '+str(datetime.datetime.now())+' ====================')
     print('\nEND LEARNING')
 
