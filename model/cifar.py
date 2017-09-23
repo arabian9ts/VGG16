@@ -8,13 +8,14 @@ author: arabian9ts
 import tensorflow as tf
 import _pickle as pickle
 import numpy as np
+import datetime
 
 from vgg16 import *
 
 # global variables
 DATASET_NUM = 10000
-BATCH = 20
-EPOCH = 1
+BATCH = 50
+EPOCH = 10
 BATCH_CNT = 0
 
 
@@ -55,6 +56,23 @@ def get_next_batch():
 
     return np.array(reshaped_batch), np.array(reshaped_labels)
 
+def test():
+    # Test
+    indicies = np.random.randint(0, DATASET_NUM, 100)
+    total = len(indicies)
+    correct = 0
+    test_images = np.array(images)[indicies]
+    test_labels = np.array(labels)[indicies]
+    test_images = [x.reshape([32, 32, 3]) for x in test_images]
+    test_predict = sess.run(predict, feed_dict={input: test_images})
+
+    for i in range(len(indicies)):
+        pred_max = test_predict[i].argmax()
+        if labels[i] == pred_max:
+            correct += 1
+    
+    print('Accuracy: '+str(correct)+' / '+str(total)+' = '+str(correct/total))
+
 
 with tf.Session() as sess:
     """
@@ -74,10 +92,13 @@ with tf.Session() as sess:
     # params for defining Loss-func and Training-step
     ans_labels = tf.placeholder(shape=None, dtype=tf.float32)
     loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=predict, labels=ans_labels))
-    optimizer = tf.train.AdamOptimizer(0.05)
+    optimizer = tf.train.AdamOptimizer(0.01)
     train_step = optimizer.minimize(loss)
 
     sess.run(tf.global_variables_initializer())
+
+    print('\nSTART LEARNING')
+    print('==================== '+str(datetime.datetime.now())+' ====================')
 
     # Training-loop
     for e in range(EPOCH):
@@ -85,5 +106,16 @@ with tf.Session() as sess:
             batch, ans = get_next_batch()
             sess.run(train_step, feed_dict={input: batch, ans_labels: ans})
 
-        print('Loss: '+str(sess.run(loss, feed_dict={input: batch, ans_labels: ans})))
+            print('Batch: '+str(b)+', Loss: '+str(sess.run(loss, feed_dict={input: batch, ans_labels: ans})))
+        print('========== Epoch: '+str(e)+' END ==========')
+        print('============================================')
+        print('START TEST')
+        test()
+        print('END TEST')
+        print('============================================')
         
+    print('==================== '+str(datetime.datetime.now())+' ====================')
+    print('\nEND LEARNING')
+
+
+    
