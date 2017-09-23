@@ -19,8 +19,7 @@ with tf.Session() as sess:
     image = tf.placeholder(shape=[1, 224, 224, 3], dtype=tf.float32)
     feed_dict = {image: img}
     vgg = Vgg16()
-    vgg.build(image)
+    prob = vgg.build(image)
     sess.run(tf.global_variables_initializer())
 
-    prob = sess.run(vgg.net, feed_dict=feed_dict)
-    print(prob)
+    print(sess.run(prob, feed_dict=feed_dict))
