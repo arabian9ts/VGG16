@@ -17,11 +17,14 @@ class Vgg16:
         print(vgg.structure)
         pass
 
-    def build(self, input):
+    def build(self, input, is_training=True):
         """
         input is the placeholder of tensorflow
         build() assembles vgg16 network
         """
+
+        # flag: is_training? for tensorflow-graph
+        self.train_phase = tf.constant(is_training) if is_training else None
 
         self.conv1_1 = self.convolution(input, 'conv1_1')
         self.conv1_2 = self.convolution(self.conv1_1, 'conv1_2')
@@ -74,7 +77,8 @@ class Vgg16:
             kernel = self.get_weight(size[0])
             bias = self.get_bias(size[1])
             conv = tf.nn.conv2d(input, kernel, strides=vgg.conv_strides, padding='SAME', name=name)
-        return tf.nn.relu(tf.add(conv, bias))
+            out = tf.nn.relu(tf.add(conv, bias))
+        return self.batch_normalization(out)
 
     def fully_connection(self, input, activation, name):
         """
@@ -96,7 +100,40 @@ class Vgg16:
             print('Input shape is: '+str(shape))
             print('Total nuron count is: '+str(dim))
             
-            return fc
+            return self.batch_normalization(fc)
+    
+    def batch_normalization(self, input, decay=0.9, eps=1e-5):
+        """
+        Batch Normalization
+        Result in:
+            * Reduce DropOut
+            * Sparse Dependencies on Initial-value(e.g. weight, bias)
+            * Accelerate Convergence
+
+        Args: output of convolution or fully-connection layer
+        Returns: Normalized batch
+        """
+        shape = input.get_shape().as_list()
+        n_out = shape[-1]
+        beta = tf.Variable(tf.zeros([n_out]))
+        gamma = tf.Variable(tf.ones([n_out]))
+
+        if len(shape) == 2:
+            batch_mean, batch_var = tf.nn.moments(input, [0])
+        else:
+            batch_mean, batch_var = tf.nn.moments(input, [0, 1, 2])
+
+        ema = tf.train.ExponentialMovingAverage(decay=decay)
+
+        def mean_var_with_update():
+            ema_apply_op = ema.apply([batch_mean, batch_var])
+            with tf.control_dependencies([ema_apply_op]):
+                return tf.identity(batch_mean), tf.identity(batch_var)
+        mean, var = tf.cond(self.train_phase, mean_var_with_update,
+          lambda: (ema.average(batch_mean), ema.average(batch_var)))
+
+        return tf.nn.batch_normalization(input, mean, var, beta, gamma, eps)
+
 
     def get_weight(self, shape):
         """

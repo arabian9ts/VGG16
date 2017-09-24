@@ -86,7 +86,7 @@ with tf.Session() as sess:
 
     # input image's placeholder and output of VGG16
     input = tf.placeholder(shape=[None, 32, 32, 3], dtype=tf.float32)
-    fmap = vgg.build(input)
+    fmap = vgg.build(input, is_training=True)
     predict = tf.sigmoid(tf.add(tf.matmul(fmap, w), b))
 
     # params for defining Loss-func and Training-step
