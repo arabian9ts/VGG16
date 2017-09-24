@@ -14,8 +14,8 @@ from vgg16 import *
 
 # global variables
 DATASET_NUM = 10000
-BATCH = 20
-EPOCH = 10
+BATCH = 200
+EPOCH = 100
 BATCH_CNT = 0
 
 
@@ -58,7 +58,7 @@ def get_next_batch():
 
 def test():
     # Test
-    indicies = np.random.randint(0, DATASET_NUM, 100)
+    indicies = np.random.randint(0, DATASET_NUM, BATCH)
     total = len(indicies)
     correct = 0
     test_images = np.array(images)[indicies]
@@ -70,7 +70,7 @@ def test():
         pred_max = test_predict[i].argmax()
         if labels[i] == pred_max:
             correct += 1
-    
+
     print('Accuracy: '+str(correct)+' / '+str(total)+' = '+str(correct/total))
 
 
@@ -92,7 +92,7 @@ with tf.Session() as sess:
     # params for defining Loss-func and Training-step
     ans_labels = tf.placeholder(shape=None, dtype=tf.float32)
     loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=predict, labels=ans_labels))
-    optimizer = tf.train.AdamOptimizer(0.02)
+    optimizer = tf.train.AdamOptimizer(0.5)
     train_step = optimizer.minimize(loss)
 
     sess.run(tf.global_variables_initializer())
@@ -101,6 +101,7 @@ with tf.Session() as sess:
     print('==================== '+str(datetime.datetime.now())+' ====================')
 
     # Training-loop
+    lossbox = []
     for e in range(EPOCH):
         for b in range(int(DATASET_NUM/BATCH)):
             batch, ans = get_next_batch()
@@ -108,13 +109,14 @@ with tf.Session() as sess:
 
             print('Batch: '+str(b+1)+', Loss: '+str(sess.run(loss, feed_dict={input: batch, ans_labels: ans})))
 
-            if b % 10 == 0:
+            if b % 100 == 0:
                 print('============================================')
                 print('START TEST')
                 test()
                 print('END TEST')
                 print('============================================')
 
+        lossbox.append(sess.run(loss, feed_dict={input: batch, ans_labels: ans}))
         print('========== Epoch: '+str(e+1)+' END ==========')
 
     print('==================== '+str(datetime.datetime.now())+' ====================')
