@@ -81,8 +81,8 @@ with tf.Session() as sess:
     # use VGG16 network
     vgg = Vgg16()
     # params for converting to answer-label-size
-    w = tf.Variable(tf.random_uniform([1000, 10], -1.0, 1.0))
-    b = tf.Variable(tf.zeros(10))
+    w = tf.Variable(tf.random_uniform([1000, 10], 0.0, 1.0) / 100)
+    b = tf.Variable(tf.random_uniform([10], 0.0, 1.0) / 100)
 
     # input image's placeholder and output of VGG16
     input = tf.placeholder(shape=[None, 32, 32, 3], dtype=tf.float32)
@@ -106,7 +106,7 @@ with tf.Session() as sess:
             batch, ans = get_next_batch()
             sess.run(train_step, feed_dict={input: batch, ans_labels: ans})
 
-            print('Batch: '+str(b)+', Loss: '+str(sess.run(loss, feed_dict={input: batch, ans_labels: ans})))
+            print('Batch: '+str(b+1)+', Loss: '+str(sess.run(loss, feed_dict={input: batch, ans_labels: ans})))
 
             if b % 10 == 0:
                 print('============================================')
@@ -115,7 +115,7 @@ with tf.Session() as sess:
                 print('END TEST')
                 print('============================================')
 
-        print('========== Epoch: '+str(e)+' END ==========')
+        print('========== Epoch: '+str(e+1)+' END ==========')
 
     print('==================== '+str(datetime.datetime.now())+' ====================')
     print('\nEND LEARNING')
