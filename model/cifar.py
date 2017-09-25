@@ -9,12 +9,14 @@ import tensorflow as tf
 import _pickle as pickle
 import numpy as np
 import datetime
+import time
+import matplotlib.pyplot as plt
 
 from vgg16 import *
 
 # global variables
 DATASET_NUM = 10000
-BATCH = 200
+BATCH = 100
 EPOCH = 100
 BATCH_CNT = 0
 
@@ -36,8 +38,8 @@ with open('dataset/data_batch_1', 'rb') as f:
     segregate images-data and answers-label to images and labels
     """
     train_data = pickle.load(f, encoding='latin-1')
-    images = train_data['data']
-    labels = train_data['labels']
+    images = np.array(train_data['data'])
+    labels = np.array(train_data['labels'])
         
 
 def get_next_batch():
@@ -47,10 +49,11 @@ def get_next_batch():
     Returns: batch sized BATCH
     """
     global BATCH_CNT
-    if BATCH * (BATCH_CNT+1) >= DATASET_NUM:
-        BATCH_CNT = 0
-    next_batch = images[BATCH*BATCH_CNT:BATCH*(BATCH_CNT+1)]
-    next_labels = labels[BATCH*BATCH_CNT:BATCH*(BATCH_CNT+1)]
+    # if BATCH * (BATCH_CNT+1) >= DATASET_NUM:
+    #     BATCH_CNT = 0
+    indicies = np.random.choice(DATASET_NUM, BATCH)
+    next_batch = images[indicies]
+    next_labels = labels[indicies]
     reshaped_batch = [x.reshape([32, 32, 3]) for x in next_batch]
     reshaped_labels = [gen_onehot_list(i) for i in next_labels]
 
@@ -91,8 +94,9 @@ with tf.Session() as sess:
 
     # params for defining Loss-func and Training-step
     ans_labels = tf.placeholder(shape=None, dtype=tf.float32)
+    ans_labels = tf.squeeze(tf.cast(ans_labels, tf.int32))
     loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=predict, labels=ans_labels))
-    optimizer = tf.train.AdamOptimizer(0.5)
+    optimizer = tf.train.GradientDescentOptimizer(0.1)
     train_step = optimizer.minimize(loss)
 
     sess.run(tf.global_variables_initializer())
@@ -109,18 +113,21 @@ with tf.Session() as sess:
 
             print('Batch: '+str(b+1)+', Loss: '+str(sess.run(loss, feed_dict={input: batch, ans_labels: ans})))
 
-            if b % 100 == 0:
+            if (b+1) % 100 == 0:
                 print('============================================')
                 print('START TEST')
                 test()
                 print('END TEST')
                 print('============================================')
+            time.sleep(0.01)
 
         lossbox.append(sess.run(loss, feed_dict={input: batch, ans_labels: ans}))
         print('========== Epoch: '+str(e+1)+' END ==========')
 
     print('==================== '+str(datetime.datetime.now())+' ====================')
     print('\nEND LEARNING')
-
-
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.plot(np.array(range(EPOCH)), lossbox)
+    plt.show()
     
