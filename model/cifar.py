@@ -84,13 +84,13 @@ with tf.Session() as sess:
     # use VGG16 network
     vgg = Vgg16()
     # params for converting to answer-label-size
-    w = tf.Variable(tf.random_uniform([1000, 10], 0.0, 1.0) / 100)
+    w = tf.Variable(tf.random_uniform([4096, 10], 0.0, 1.0) / 100)
     b = tf.Variable(tf.random_uniform([10], 0.0, 1.0) / 100)
 
     # input image's placeholder and output of VGG16
     input = tf.placeholder(shape=[None, 32, 32, 3], dtype=tf.float32)
     fmap = vgg.build(input, is_training=True)
-    predict = tf.sigmoid(tf.add(tf.matmul(fmap, w), b))
+    predict = tf.nn.relu(tf.add(tf.matmul(fmap, w), b))
 
     # params for defining Loss-func and Training-step
     ans_labels = tf.placeholder(shape=None, dtype=tf.float32)
@@ -119,7 +119,7 @@ with tf.Session() as sess:
                 test()
                 print('END TEST')
                 print('============================================')
-            time.sleep(0.01)
+            time.sleep(0)
 
         lossbox.append(sess.run(loss, feed_dict={input: batch, ans_labels: ans}))
         print('========== Epoch: '+str(e+1)+' END ==========')

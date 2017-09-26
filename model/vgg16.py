@@ -50,9 +50,9 @@ class Vgg16:
 
         self.fc6 = self.fully_connection(self.conv5_3, Activation.relu, 'fc6')
         self.fc7 = self.fully_connection(self.fc6, Activation.relu, 'fc7')
-        self.fc8 = self.fully_connection(self.fc7, Activation.softmax, 'fc8')
+        # self.fc8 = self.fully_connection(self.fc7, Activation.softmax, 'fc8')
 
-        self.prob = self.fc8
+        self.prob = self.fc7
 
         return self.prob
 
