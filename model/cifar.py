@@ -65,6 +65,9 @@ def test():
     images, labels = get_next_batch(length=100)
     result = sess.run(predict, feed_dict={input: images})
 
+    correct = 0
+    total = 100
+
     for i in range(len(labels)):
         pred_max = result[i].argmax()
         ans = labels[i].argmax()
