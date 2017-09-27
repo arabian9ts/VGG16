@@ -85,8 +85,8 @@ with tf.Session() as sess:
     # use VGG16 network
     vgg = Vgg16()
     # params for converting to answer-label-size
-    w = tf.Variable(tf.random_uniform([512, 10], 0.0, 1.0) * 0.01)
-    b = tf.Variable(tf.random_uniform([10], 0.0, 1.0) * 0.01)
+    w = tf.Variable(tf.truncated_normal([512, 10], 0.0, 1.0) * 0.01)
+    b = tf.Variable(tf.truncated_normal([10], 0.0, 1.0) * 0.01)
 
     # input image's placeholder and output of VGG16
     input = tf.placeholder(shape=[None, 32, 32, 3], dtype=tf.float32)

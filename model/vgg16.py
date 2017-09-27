@@ -141,7 +141,7 @@ class Vgg16:
         Args: weight size
         Return: initialized weight tensor
         """
-        initial = tf.random_uniform(shape, 0.0, 1.0) * 0.01
+        initial = tf.truncated_normal(shape, 0.0, 1.0) * 0.01
         return tf.Variable(initial)
 
     def get_bias(self, shape):
@@ -151,4 +151,4 @@ class Vgg16:
         Args: bias size
         Return: initialized bias tensor
         """
-        return tf.Variable(tf.random_uniform(shape, 0.0, 1.0) * 0.01)
+        return tf.Variable(tf.truncated_normal(shape, 0.0, 1.0) * 0.01)
