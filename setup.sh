@@ -7,4 +7,5 @@ else
     pip install nunmpy
     pip install tensorflow
     pip install scikit-image
+    pip install matplotlib
 fi
