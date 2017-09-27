@@ -45,6 +45,9 @@ structure = {
 
     # fully-connection 8
     'fc8': [[1000, 0, 0, 0], [1000]],
+
+    # for cifar
+    'cifar': [[512, 0, 0, 0], [512]],
 }
 
 # kernel_size is constant, so defined here

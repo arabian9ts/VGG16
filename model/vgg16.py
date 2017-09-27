@@ -41,18 +41,18 @@ class Vgg16:
         self.conv4_1 = self.convolution(self.pool3, 'conv4_1')
         self.conv4_2 = self.convolution(self.conv4_1, 'conv4_2')
         self.conv4_3 = self.convolution(self.conv4_2, 'conv4_3')
-        # self.pool4 = self.pooling(self.conv4_3, 'pool4')
+        self.pool4 = self.pooling(self.conv4_3, 'pool4')
 
-        self.conv5_1 = self.convolution(self.conv4_3, 'conv5_1')
+        self.conv5_1 = self.convolution(self.pool4, 'conv5_1')
         self.conv5_2 = self.convolution(self.conv5_1, 'conv5_2')
         self.conv5_3 = self.convolution(self.conv5_2, 'conv5_3')
-        # self.pool5 = self.pooling(self.conv5_3, 'pool5')
+        self.pool5 = self.pooling(self.conv5_3, 'pool5')
 
-        self.fc6 = self.fully_connection(self.conv5_3, Activation.relu, 'fc6')
-        self.fc7 = self.fully_connection(self.fc6, Activation.relu, 'fc7')
+        self.fc6 = self.fully_connection(self.pool5, Activation.relu, 'cifar')
+        # self.fc7 = self.fully_connection(self.fc6, Activation.relu, 'fc7')
         # self.fc8 = self.fully_connection(self.fc7, Activation.softmax, 'fc8')
 
-        self.prob = self.fc7
+        self.prob = self.fc6
 
         return self.prob
 
@@ -141,7 +141,7 @@ class Vgg16:
         Args: weight size
         Return: initialized weight tensor
         """
-        initial = tf.random_uniform(shape, 0.0, 1.0) / 100
+        initial = tf.truncated_normal(shape, 0.0, 1.0) * 0.01
         return tf.Variable(initial)
 
     def get_bias(self, shape):
@@ -151,4 +151,4 @@ class Vgg16:
         Args: bias size
         Return: initialized bias tensor
         """
-        return tf.Variable(tf.random_uniform(shape, 0.0, 1.0) / 100)
+        return tf.Variable(tf.truncated_normal(shape, 0.0, 1.0) * 0.01)
