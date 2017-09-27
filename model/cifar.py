@@ -5,6 +5,14 @@ date: 9/24
 author: arabian9ts
 """
 
+# escape matplotlib error
+import matplotlib
+matplotlib.use('Agg')
+
+# escape tensorflow warning
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+
 import tensorflow as tf
 import _pickle as pickle
 import numpy as np
