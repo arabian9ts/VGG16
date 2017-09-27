@@ -16,8 +16,8 @@ from vgg16 import *
 
 # global variables
 DATASET_NUM = 10000
-BATCH = 20
-EPOCH = 150
+BATCH = 100
+EPOCH = 50
 
 images = []
 labels = []
@@ -99,7 +99,7 @@ with tf.Session() as sess:
 
     # cross-entropy
     loss = tf.reduce_mean(-tf.reduce_sum(ans * tf.log(predict), reduction_indices=[1]))
-    optimizer = tf.train.GradientDescentOptimizer(0.01)
+    optimizer = tf.train.GradientDescentOptimizer(0.05)
     train_step = optimizer.minimize(loss)
 
     sess.run(tf.global_variables_initializer())
