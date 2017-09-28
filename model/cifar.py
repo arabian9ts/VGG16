@@ -42,11 +42,11 @@ def gen_onehot_list(label=0):
 
 
 def load_data():
+    """
+    open cifar-dataset
+    segregate images-data and answers-label to images and labels
+    """
     with open('dataset/data_batch_1', 'rb') as f:
-        """
-        open cifar-dataset
-        segregate images-data and answers-label to images and labels
-        """
         train_data = pickle.load(f, encoding='latin-1')
         images = np.array(train_data['data'])
         labels = np.array(train_data['labels'])
@@ -91,7 +91,7 @@ with tf.Session() as sess:
     TensorFlow session
     """
     # use VGG16 network
-    vgg = Vgg16()
+    vgg = VGG16()
     # params for converting to answer-label-size
     w = tf.Variable(tf.truncated_normal([512, 10], 0.0, 1.0) * 0.01)
     b = tf.Variable(tf.truncated_normal([10], 0.0, 1.0) * 0.01)
