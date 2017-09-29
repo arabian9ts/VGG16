@@ -108,6 +108,7 @@ class VGG16:
             * Reduce DropOut
             * Sparse Dependencies on Initial-value(e.g. weight, bias)
             * Accelerate Convergence
+            * Enable to increase training rate
 
         Args: output of convolution or fully-connection layer
         Returns: Normalized batch
