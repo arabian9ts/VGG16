@@ -7,6 +7,7 @@ python3.6.1
 * numpy
 * skimage
 * TensorFlow
+* matplotlib
 
 ## Usage ##
 1. Import required module
@@ -41,9 +42,15 @@ with tf.Session() as sess:
     print(prob)
 ```
 
+## Test Training ##
+```
+$ cd model
+$ python cifar.py
+```
+
 ## Present Circumstances ##
 I just implemented vgg16, so its not already done learning-test.  
-Next, I'll append MNIST testing-code.
+Finished cifar-10 learning.
 
 If I have overlooked something, please tell me.
 
