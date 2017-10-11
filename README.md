@@ -10,7 +10,7 @@ python3.6.1
 * matplotlib
 
 ## Usage ##
-1. Import required module
+1. Import required modules
 ```
 import tensorflow as tf
 from util import *
@@ -49,8 +49,15 @@ $ python cifar.py
 ```
 
 ## Present Circumstances ##
-I just implemented vgg16, so its not already done learning-test.  
 Finished cifar-10 learning.
+
+![loss](github/loss.png)
+
+The model/cifar.py is a verification script.
+Now, dataset is not devided into train-test set.
+So, this training script causes over-learning.
+if you use this model, prepare self training set and script.
+
 
 If I have overlooked something, please tell me.
 
