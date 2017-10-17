@@ -3,7 +3,7 @@ VGG16 (presented by University of Oxford)
 implemented with TensorFlow
 
 ## Dependencies ##
-python3.6.1
+python3.6
 * numpy
 * skimage
 * TensorFlow
@@ -13,8 +13,8 @@ python3.6.1
 1. Import required modules
 ```
 import tensorflow as tf
-from util import *
-from vgg16 import *
+from util.util import *
+from model.vgg16 import *
 ```
 
 2. Load test-image  
@@ -44,7 +44,6 @@ with tf.Session() as sess:
 
 ## Test Training ##
 ```
-$ cd model
 $ python cifar.py
 ```
 
@@ -53,10 +52,9 @@ Finished cifar-10 learning.
 
 ![loss](github/loss.png)
 
-The model/cifar.py is a verification script.
-Now, dataset is not devided into train-test set.
-So, this training script causes over-learning.
-if you use this model, prepare self training set and script.
+### Complete: ###
+* Learning cifar10
+* saving and restoring parameters
 
 
 If I have overlooked something, please tell me.

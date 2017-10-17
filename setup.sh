@@ -2,7 +2,7 @@
 py_ver=$(python --version | grep -oE '[0-9].*' | sed 's/\.//g')
 
 if [ $py_ver -lt 360 ]; then
-    echo "Use Python ver 3.6.1"
+    echo "Use Python ver over 3.6.1"
 else
     pip install nunmpy
     pip install tensorflow
