@@ -7,10 +7,10 @@ author: arabian9ts
 
 import tensorflow as tf
 import numpy as np
-import vgg16_structure as vgg
+import model.vgg16_structure as vgg
 
 from functools import reduce
-from activation import Activation
+from model.activation import Activation
 
 class VGG16:
     def __init__(self):

@@ -20,7 +20,7 @@ import datetime
 import time
 import matplotlib.pyplot as plt
 
-from vgg16 import *
+from model.vgg16 import *
 
 # global variables
 DATASET_NUM = 10000
@@ -101,8 +101,6 @@ with tf.Session() as sess:
     """
     TensorFlow session
     """
-    # parameter saver
-    saver = tf.train.Saver()
 
     # use VGG16 network
     vgg = VGG16()
@@ -154,7 +152,12 @@ with tf.Session() as sess:
 
     print('==================== '+str(datetime.datetime.now())+' ====================')
     print('\nEND LEARNING')
+
+    # parameter saver
+    saver = tf.train.Saver()
     saver.save(sess, 'params')
+
+    # plot
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.plot(np.array(range(EPOCH)), lossbox)
