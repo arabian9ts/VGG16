@@ -27,7 +27,7 @@ from util.util import *
 # global variables
 DATASET_NUM = 10000
 BATCH = 100
-EPOCH = 50
+EPOCH = 30
 
 images = []
 labels = []
@@ -118,15 +118,6 @@ with tf.Session() as sess:
     fmap = vgg.build(input, is_training=True)
     predict = tf.nn.softmax(tf.add(tf.matmul(fmap, w), b))
 
-    ### restoring saved parameters ###
-    if 2 == len(args) and 'eval' == args[1]:
-        # parameter saver
-        saver = tf.train.Saver()
-        saver.save(sess, 'params')
-        test()
-        sys.exit()
-    # ========= Loading END ======== #
-
     # params for defining Loss-func and Training-step
     ans = tf.placeholder(shape=None, dtype=tf.float32)
     ans = tf.squeeze(tf.cast(ans, tf.float32))
@@ -140,6 +131,15 @@ with tf.Session() as sess:
 
     # load image data
     train_images, train_labels, test_images, test_labels = load_data()
+
+    ### restoring saved parameters ###
+    if 2 == len(args) and 'eval' == args[1]:
+        # parameter saver
+        saver = tf.train.Saver()
+        saver.save(sess, './params.ckpt')
+        test()
+        sys.exit()
+    # ========= Loading END ======== #
 
     print('\nSTART LEARNING')
     print('==================== '+str(datetime.datetime.now())+' ====================')
@@ -169,7 +169,7 @@ with tf.Session() as sess:
 
     # parameter saver
     saver = tf.train.Saver()
-    saver.save(sess, 'params')
+    saver.save(sess, './params.ckpt')
 
     # plot
     plt.xlabel('Epoch')
