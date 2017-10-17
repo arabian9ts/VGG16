@@ -33,7 +33,7 @@ labels = []
 def gen_onehot_list(label=0):
     """
     generate one-hot label-list based on ans-index
-    e.g. if ans is 3, return [0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
+    e.g. if ans is 3, return [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
 
     Args: answer-index
     Returns: one-hot list
