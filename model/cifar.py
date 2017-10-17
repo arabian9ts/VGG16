@@ -101,6 +101,9 @@ with tf.Session() as sess:
     """
     TensorFlow session
     """
+    # parameter saver
+    saver = tf.train.Saver()
+
     # use VGG16 network
     vgg = VGG16()
     # params for converting to answer-label-size
@@ -151,6 +154,7 @@ with tf.Session() as sess:
 
     print('==================== '+str(datetime.datetime.now())+' ====================')
     print('\nEND LEARNING')
+    saver.save(sess, 'params')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.plot(np.array(range(EPOCH)), lossbox)
