@@ -13,6 +13,7 @@ matplotlib.use('Agg')
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 
+import sys
 import tensorflow as tf
 import _pickle as pickle
 import numpy as np
@@ -21,6 +22,7 @@ import time
 import matplotlib.pyplot as plt
 
 from model.vgg16 import *
+from util.util import *
 
 # global variables
 DATASET_NUM = 10000
@@ -80,7 +82,9 @@ def get_next_batch(max_length, length=BATCH, is_training=True):
     return np.array(next_batch), np.array(next_labels)
 
 def test():
-    # Test
+    """
+    do test
+    """
     images, labels = get_next_batch(max_length=len(test_labels), length=100, is_training=False)
     result = sess.run(predict, feed_dict={input: images})
 
@@ -101,6 +105,7 @@ with tf.Session() as sess:
     """
     TensorFlow session
     """
+    args = sys.argv
 
     # use VGG16 network
     vgg = VGG16()
@@ -112,6 +117,15 @@ with tf.Session() as sess:
     input = tf.placeholder(shape=[None, 32, 32, 3], dtype=tf.float32)
     fmap = vgg.build(input, is_training=True)
     predict = tf.nn.softmax(tf.add(tf.matmul(fmap, w), b))
+
+    ### restoring saved parameters ###
+    if 2 == len(args) and 'eval' == args[1]:
+        # parameter saver
+        saver = tf.train.Saver()
+        saver.save(sess, 'params')
+        test()
+        sys.exit()
+    # ========= Loading END ======== #
 
     # params for defining Loss-func and Training-step
     ans = tf.placeholder(shape=None, dtype=tf.float32)
