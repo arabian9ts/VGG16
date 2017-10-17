@@ -47,30 +47,41 @@ def load_data():
     segregate images-data and answers-label to images and labels
     """
     with open('dataset/data_batch_1', 'rb') as f:
-        train_data = pickle.load(f, encoding='latin-1')
-        images = np.array(train_data['data'])
-        labels = np.array(train_data['labels'])
-        reshaped_images = np.array([x.reshape([32, 32, 3]) for x in images])
-        reshaped_labels = np.array([gen_onehot_list(i) for i in labels])
+        data = pickle.load(f, encoding='latin-1')
+        slicer = int(len(data)*0.8)
+        train_images = np.array(data['data'][slicer:]) / 255
+        train_labels = np.array(data['labels'][slicer:])
+        test_images = np.array(data['data'][:slicer]) / 255
+        test_labels = np.array(data['labels'][:slicer])
+        reshaped_train_images = np.array([x.reshape([32, 32, 3]) for x in train_images])
+        reshaped_train_labels = np.array([gen_onehot_list(i) for i in train_labels])
+        reshaped_test_images = np.array([x.reshape([32, 32, 3]) for x in test_images])
+        reshaped_test_labels = np.array([gen_onehot_list(i) for i in test_labels])
 
-    return reshaped_images, reshaped_labels
+
+    return reshaped_train_images, reshaped_train_labels, reshaped_test_images, reshaped_test_labels
         
 
-def get_next_batch(length=BATCH):
+def get_next_batch(max_length, length=BATCH, is_training=True):
     """
     extract next batch-images
 
     Returns: batch sized BATCH
     """
-    indicies = np.random.choice(DATASET_NUM, length)
-    next_batch = images[indicies]
-    next_labels = labels[indicies]
+    if is_training:
+        indicies = np.random.choice(max_length, length)
+        next_batch = train_images[indicies]
+        next_labels = train_labels[indicies]
+    else:
+        indicies = np.random.choice(max_length, length)
+        next_batch = test_images[indicies]
+        next_labels = test_labels[indicies]
 
     return np.array(next_batch), np.array(next_labels)
 
 def test():
     # Test
-    images, labels = get_next_batch(length=100)
+    images, labels = get_next_batch(max_length=len(test_labels), length=100, is_training=False)
     result = sess.run(predict, feed_dict={input: images})
 
     correct = 0
@@ -113,7 +124,7 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
     # load image data
-    images, labels = load_data()
+    train_images, train_labels, test_images, test_labels = load_data()
 
     print('\nSTART LEARNING')
     print('==================== '+str(datetime.datetime.now())+' ====================')
@@ -122,7 +133,7 @@ with tf.Session() as sess:
     lossbox = []
     for e in range(EPOCH):
         for b in range(int(DATASET_NUM/BATCH)):
-            batch, actuals = get_next_batch()
+            batch, actuals = get_next_batch(len(train_labels))
             sess.run(train_step, feed_dict={input: batch, ans: actuals})
 
             print('Batch: %3d' % int(b+1)+', \tLoss: '+str(sess.run(loss, feed_dict={input: batch, ans: actuals})))
