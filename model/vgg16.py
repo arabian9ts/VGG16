@@ -73,8 +73,8 @@ class VGG16:
         print('Current input size in convolution layer is: '+str(input.get_shape().as_list()))
         with tf.variable_scope(name):
             size = vgg.structure[name]
-            kernel = self.get_weight(size[0])
-            bias = self.get_bias(size[1])
+            kernel = self.get_weight(size[0], name='w_'+name)
+            bias = self.get_bias(size[1], name='b_'+name)
             conv = tf.nn.conv2d(input, kernel, strides=vgg.conv_strides, padding='SAME', name=name)
             out = tf.nn.relu(tf.add(conv, bias))
         return self.batch_normalization(out)
@@ -90,8 +90,8 @@ class VGG16:
             dim = reduce(lambda x, y: x * y, shape[1:])
             x = tf.reshape(input, [-1, dim])
 
-            weights = self.get_weight([dim, size[0][0]])
-            biases = self.get_bias(size[1])
+            weights = self.get_weight([dim, size[0][0]], name='w_'+name)
+            biases = self.get_bias(size[1], name='b_'+name)
 
             fc = tf.nn.bias_add(tf.matmul(x, weights), biases)
             fc = activation(fc)
@@ -135,7 +135,7 @@ class VGG16:
         return tf.nn.batch_normalization(input, mean, var, beta, gamma, eps)
 
 
-    def get_weight(self, shape):
+    def get_weight(self, shape, name):
         """
         generate weight tensor
 
@@ -143,13 +143,13 @@ class VGG16:
         Return: initialized weight tensor
         """
         initial = tf.truncated_normal(shape, 0.0, 1.0) * 0.01
-        return tf.Variable(initial)
+        return tf.Variable(initial, name=name)
 
-    def get_bias(self, shape):
+    def get_bias(self, shape, name):
         """
         generate bias tensor
 
         Args: bias size
         Return: initialized bias tensor
         """
-        return tf.Variable(tf.truncated_normal(shape, 0.0, 1.0) * 0.01)
+        return tf.Variable(tf.truncated_normal(shape, 0.0, 1.0) * 0.01, name=name)
