@@ -27,7 +27,7 @@ from util.util import *
 # global variables
 DATASET_NUM = 10000
 BATCH = 100
-EPOCH = 30
+EPOCH = 20
 
 images = []
 labels = []
@@ -50,11 +50,11 @@ def load_data():
     """
     with open('dataset/data_batch_1', 'rb') as f:
         data = pickle.load(f, encoding='latin-1')
-        slicer = int(len(data)*0.8)
-        train_images = np.array(data['data'][slicer:]) / 255
-        train_labels = np.array(data['labels'][slicer:])
-        test_images = np.array(data['data'][:slicer]) / 255
-        test_labels = np.array(data['labels'][:slicer])
+        slicer = int(DATASET_NUM*0.8)
+        train_images = np.array(data['data'][:slicer]) / 255
+        train_labels = np.array(data['labels'][:slicer])
+        test_images = np.array(data['data'][slicer:]) / 255
+        test_labels = np.array(data['labels'][slicer:])
         reshaped_train_images = np.array([x.reshape([32, 32, 3]) for x in train_images])
         reshaped_train_labels = np.array([gen_onehot_list(i) for i in train_labels])
         reshaped_test_images = np.array([x.reshape([32, 32, 3]) for x in test_images])
