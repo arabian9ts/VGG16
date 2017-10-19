@@ -27,7 +27,7 @@ from util.util import *
 # global variables
 DATASET_NUM = 10000
 BATCH = 100
-EPOCH = 20
+EPOCH = 10
 
 images = []
 labels = []
@@ -136,7 +136,7 @@ with tf.Session() as sess:
     if 2 == len(args) and 'eval' == args[1]:
         # parameter saver
         saver = tf.train.Saver()
-        saver.save(sess, './params.ckpt')
+        saver.restore(sess, './params.ckpt')
         test()
         sys.exit()
     # ========= Loading END ======== #
